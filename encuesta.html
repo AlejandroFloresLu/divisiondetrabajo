@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripción de Viaje</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger: #ef4444;
+            --success: #10b981;
+            
+            --bar-vuelos: #ec4899;
+            --bar-carros: #8b5cf6;
+            --bar-alojamiento: #10b981;
+            --bar-atracciones: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .dashboard {
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 1rem;
+        }
+
+        .poll-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .poll-option {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .poll-option:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .option-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .option-title {
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .option-limit {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .limit-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: var(--text-main);
+        }
+
+        .limit-badge.full {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 99px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn:disabled {
+            background-color: rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Specific colors for icons */
+        #opt-vuelos .icon { color: var(--bar-vuelos); }
+        #opt-carros .icon { color: var(--bar-carros); }
+        #opt-alojamiento .icon { color: var(--bar-alojamiento); }
+        #opt-atracciones .icon { color: var(--bar-atracciones); }
+
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="dashboard">
+        <h1>Formulario de Inscripción</h1>
+        <p class="subtitle">Selecciona tus servicios (Cupos limitados)</p>
+
+        <div class="poll-container">
+            
+            <!-- Opción 1: Vuelos (Límite 6) -->
+            <div class="poll-option" id="opt-vuelos">
+                <div class="option-info">
+                    <div class="option-title"><span class="icon">✈️</span> Vuelos</div>
+                    <div class="option-limit">
+                        Cupos registrados: <span class="limit-badge" id="badge-vuelos">0 / 6</span>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn" onclick="register('vuelos', 6)">Inscribirse</button>
+                </div>
+            </div>
+
+            <!-- Opción 2: Carros (Límite 5) -->
+            <div class="poll-option" id="opt-carros">
+                <div class="option-info">
+                    <div class="option-title"><span class="icon">🚗</span> Arrendamiento de carros</div>
+                    <div class="option-limit">
+                        Cupos registrados: <span class="limit-badge" id="badge-carros">0 / 5</span>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn" onclick="register('carros', 5)">Inscribirse</button>
+                </div>
+            </div>
+
+            <!-- Opción 3: Alojamiento (Límite 5) -->
+            <div class="poll-option" id="opt-alojamiento">
+                <div class="option-info">
+                    <div class="option-title"><span class="icon">🏨</span> Alojamiento</div>
+                    <div class="option-limit">
+                        Cupos registrados: <span class="limit-badge" id="badge-alojamiento">0 / 5</span>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn" onclick="register('alojamiento', 5)">Inscribirse</button>
+                </div>
+            </div>
+
+            <!-- Opción 4: Atracciones (Límite 5) -->
+            <div class="poll-option" id="opt-atracciones">
+                <div class="option-info">
+                    <div class="option-title"><span class="icon">🎢</span> Atracciones</div>
+                    <div class="option-limit">
+                        Cupos registrados: <span class="limit-badge" id="badge-atracciones">0 / 5</span>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn" onclick="register('atracciones', 5)">Inscribirse</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Estado inicial de inscripciones
+        const counts = {
+            vuelos: 0,
+            carros: 0,
+            alojamiento: 0,
+            atracciones: 0
+        };
+
+        function register(option, maxLimit) {
+            if (counts[option] < maxLimit) {
+                counts[option]++;
+                updateUI(option, maxLimit);
+            }
+        }
+
+        function updateUI(option, maxLimit) {
+            const badge = document.getElementById(`badge-${option}`);
+            const btn = document.querySelector(`#opt-${option} .btn`);
+            
+            badge.textContent = `${counts[option]} / ${maxLimit}`;
+            
+            if (counts[option] >= maxLimit) {
+                badge.classList.add('full');
+                badge.textContent = '¡Agotado!';
+                btn.disabled = true;
+                btn.textContent = 'Lleno';
+            }
+        }
+    </script>
+</body>
+</html>
