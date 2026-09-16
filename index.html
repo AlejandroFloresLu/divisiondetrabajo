@@ -33,7 +33,7 @@
             color: var(--text-main);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
             padding: 2rem;
         }
@@ -43,7 +43,7 @@
             border-radius: 24px;
             padding: 3rem;
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255,255,255,0.1);
         }
@@ -66,6 +66,7 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            margin-bottom: 3rem;
         }
 
         .poll-option {
@@ -74,15 +75,9 @@
             padding: 1.5rem;
             position: relative;
             overflow: hidden;
-            transition: transform 0.2s ease, background 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: space-between;
-        }
-
-        .poll-option:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.05);
         }
 
         .option-info {
@@ -148,12 +143,93 @@
             cursor: not-allowed;
         }
 
-        /* Specific colors for icons */
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .modal h2 { margin-bottom: 1.5rem; }
+
+        .form-group {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Table Styles */
+        .table-container {
+            margin-top: 2rem;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* Specific colors */
         #opt-vuelos .icon { color: var(--bar-vuelos); }
         #opt-carros .icon { color: var(--bar-carros); }
         #opt-alojamiento .icon { color: var(--bar-alojamiento); }
         #opt-atracciones .icon { color: var(--bar-atracciones); }
-
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -164,8 +240,7 @@
         <p class="subtitle">Selecciona tus servicios (Cupos limitados)</p>
 
         <div class="poll-container">
-            
-            <!-- Opción 1: Vuelos (Límite 6) -->
+            <!-- Opciones -->
             <div class="poll-option" id="opt-vuelos">
                 <div class="option-info">
                     <div class="option-title"><span class="icon">✈️</span> Vuelos</div>
@@ -174,11 +249,10 @@
                     </div>
                 </div>
                 <div class="actions">
-                    <button class="btn" onclick="register('vuelos', 6)">Inscribirse</button>
+                    <button class="btn" onclick="openModal('vuelos', 'Vuelos')">Inscribirse</button>
                 </div>
             </div>
 
-            <!-- Opción 2: Carros (Límite 5) -->
             <div class="poll-option" id="opt-carros">
                 <div class="option-info">
                     <div class="option-title"><span class="icon">🚗</span> Arrendamiento de carros</div>
@@ -187,11 +261,10 @@
                     </div>
                 </div>
                 <div class="actions">
-                    <button class="btn" onclick="register('carros', 5)">Inscribirse</button>
+                    <button class="btn" onclick="openModal('carros', 'Arrendamiento de carros')">Inscribirse</button>
                 </div>
             </div>
 
-            <!-- Opción 3: Alojamiento (Límite 5) -->
             <div class="poll-option" id="opt-alojamiento">
                 <div class="option-info">
                     <div class="option-title"><span class="icon">🏨</span> Alojamiento</div>
@@ -200,11 +273,10 @@
                     </div>
                 </div>
                 <div class="actions">
-                    <button class="btn" onclick="register('alojamiento', 5)">Inscribirse</button>
+                    <button class="btn" onclick="openModal('alojamiento', 'Alojamiento')">Inscribirse</button>
                 </div>
             </div>
 
-            <!-- Opción 4: Atracciones (Límite 5) -->
             <div class="poll-option" id="opt-atracciones">
                 <div class="option-info">
                     <div class="option-title"><span class="icon">🎢</span> Atracciones</div>
@@ -213,40 +285,148 @@
                     </div>
                 </div>
                 <div class="actions">
-                    <button class="btn" onclick="register('atracciones', 5)">Inscribirse</button>
+                    <button class="btn" onclick="openModal('atracciones', 'Atracciones')">Inscribirse</button>
                 </div>
             </div>
+        </div>
 
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 2rem 0;">
+
+        <h2>Lista de Inscritos</h2>
+        <div class="table-container">
+            <table id="registros-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Teléfono</th>
+                        <th>Opción Elegida</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Los registros aparecerán aquí -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Formulario -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <h2 id="modal-title">Inscripción</h2>
+            <form id="registro-form">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="input-nombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Apellido</label>
+                    <input type="text" id="input-apellido" required>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" id="input-telefono" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn">Confirmar</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
-        // Estado inicial de inscripciones
-        const counts = {
-            vuelos: 0,
-            carros: 0,
-            alojamiento: 0,
-            atracciones: 0
+        const MAX_LIMITS = {
+            vuelos: 6,
+            carros: 5,
+            alojamiento: 5,
+            atracciones: 5
         };
 
-        function register(option, maxLimit) {
-            if (counts[option] < maxLimit) {
-                counts[option]++;
-                updateUI(option, maxLimit);
+        let currentOptionId = '';
+        let currentOptionName = '';
+        
+        // Cargar registros de localStorage (o crear array vacío)
+        let registros = JSON.parse(localStorage.getItem('encuesta_registros')) || [];
+
+        document.addEventListener('DOMContentLoaded', updateAllUI);
+
+        function openModal(id, name) {
+            currentOptionId = id;
+            currentOptionName = name;
+            
+            // Verificar límite antes de abrir
+            const count = registros.filter(r => r.opcionId === id).length;
+            if (count >= MAX_LIMITS[id]) {
+                alert("Esta opción ya está llena.");
+                return;
             }
+
+            document.getElementById('modal-title').textContent = `Inscribirse en ${name}`;
+            document.getElementById('modal').style.display = 'flex';
         }
 
-        function updateUI(option, maxLimit) {
-            const badge = document.getElementById(`badge-${option}`);
-            const btn = document.querySelector(`#opt-${option} .btn`);
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('registro-form').reset();
+        }
+
+        document.getElementById('registro-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Doble check del límite
+            const count = registros.filter(r => r.opcionId === currentOptionId).length;
+            if (count >= MAX_LIMITS[currentOptionId]) return;
+
+            const nuevoRegistro = {
+                nombre: document.getElementById('input-nombre').value,
+                apellido: document.getElementById('input-apellido').value,
+                telefono: document.getElementById('input-telefono').value,
+                opcionId: currentOptionId,
+                opcionName: currentOptionName
+            };
+
+            registros.push(nuevoRegistro);
+            localStorage.setItem('encuesta_registros', JSON.stringify(registros));
             
-            badge.textContent = `${counts[option]} / ${maxLimit}`;
+            closeModal();
+            updateAllUI();
+        });
+
+        function updateAllUI() {
+            // Actualizar tabla
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
             
-            if (counts[option] >= maxLimit) {
-                badge.classList.add('full');
-                badge.textContent = '¡Agotado!';
-                btn.disabled = true;
-                btn.textContent = 'Lleno';
+            registros.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${r.nombre}</td>
+                    <td>${r.apellido}</td>
+                    <td>${r.telefono}</td>
+                    <td><strong>${r.opcionName}</strong></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Actualizar botones y contadores
+            for (const [id, max] of Object.entries(MAX_LIMITS)) {
+                const count = registros.filter(r => r.opcionId === id).length;
+                const badge = document.getElementById(`badge-${id}`);
+                const btn = document.querySelector(`#opt-${id} .btn`);
+                
+                badge.textContent = `${count} / ${max}`;
+                
+                if (count >= max) {
+                    badge.classList.add('full');
+                    badge.textContent = '¡Agotado!';
+                    btn.disabled = true;
+                    btn.textContent = 'Lleno';
+                } else {
+                    badge.classList.remove('full');
+                    btn.disabled = false;
+                    btn.textContent = 'Inscribirse';
+                }
             }
         }
     </script>
